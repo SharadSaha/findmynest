@@ -13,7 +13,7 @@ const FMNTextBox = React.forwardRef(function TextBox(
   return (
     <div className="flex flex-col">
       <span className="text-gray-700 required">
-        {props.label || "Text"} {props.required && "*"}
+        {props.label || ""} {props.required && "*"}
       </span>
       <input
         type="text"

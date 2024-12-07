@@ -11,7 +11,7 @@ const Navbar = () => {
   };
   const handleHomeClick = (e) => {
     e.preventDefault();
-    navigate("/");
+    navigate("/nests");
   };
   return (
     <nav className="p-4 px-8 bg-white w-full shadow-sm">
