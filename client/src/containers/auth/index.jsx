@@ -1,27 +1,148 @@
 import { useDispatch, useSelector } from "react-redux";
-import { loginActions } from "../../store/slices/login";
+import { authFormActions } from "../../store/slices/auth-form";
 import toast from "react-hot-toast";
-import { postActions } from "../../store/slices/post";
 import FMNTextBox from "../../components/generic/textBox";
 import FMNButton from "../../components/generic/button";
 import { useState } from "react";
-import { useGetPokemonByNameQuery } from "../../services/login";
+import {
+  useLoginUserMutation,
+  useSignupUserMutation,
+} from "../../services/login";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
-  const { data = [] } = useGetPokemonByNameQuery();
+  const navigate = useNavigate();
+
+  const [loginUser, { isLoading: loginLoading }] = useLoginUserMutation();
+  const [signupUser, { isLoading: signupLoading }] = useSignupUserMutation();
+
+  const [error, setError] = useState({
+    username: "",
+    password: "",
+    name: "",
+    email: "",
+  });
+
   const store = {
-    name: useSelector((state) => state.login.name),
-    username: useSelector((state) => state.login.username),
-    email: useSelector((state) => state.login.email),
-    password: useSelector((state) => state.post.password),
+    name: useSelector((state) => state.authForm.name),
+    username: useSelector((state) => state.authForm.username),
+    email: useSelector((state) => state.authForm.email),
+    password: useSelector((state) => state.authForm.password),
   };
 
   const handleSetLoginOrSignUp = (e) => {
-    console.log(data);
     e.preventDefault();
     setIsLogin(!isLogin);
+  };
+
+  const handleChange = (name, value) => {
+    switch (name) {
+      case "name": {
+        setError((prev) => ({
+          ...prev,
+          name: "",
+        }));
+        dispatch(authFormActions.setName(value));
+        break;
+      }
+      case "username": {
+        setError((prev) => ({
+          ...prev,
+          username: "",
+        }));
+        dispatch(authFormActions.setUserName(value));
+        break;
+      }
+      case "email": {
+        setError((prev) => ({
+          ...prev,
+          email: "",
+        }));
+        dispatch(authFormActions.setEmail(value));
+        break;
+      }
+      case "password": {
+        setError((prev) => ({
+          ...prev,
+          password: "",
+        }));
+        dispatch(authFormActions.setPassword(value));
+        break;
+      }
+    }
+  };
+
+  const handleLoginOrSignup = () => {
+    // login
+    if (isLogin) {
+      if (!store.username || !store.password) {
+        setError((prev) => ({
+          ...prev,
+          username: store.username ? "" : "Username is required",
+          password: store.password ? "" : "Password is required",
+        }));
+        return;
+      }
+
+      loginUser({
+        username: store.username,
+        password: store.password,
+      })
+        .unwrap()
+        .then((res) => {
+          dispatch(authFormActions.setUser(res.data.profile));
+          toast.success("Login successful");
+          navigate("/nests");
+        })
+        .catch(() => {
+          toast.error("Invalid credentials");
+        });
+      return;
+    }
+
+    // signup
+    if (!store.name || !store.username || !store.email || !store.password) {
+      setError((prev) => ({
+        ...prev,
+        name: store.name ? "" : "Name is required",
+        username: store.username ? "" : "Username is required",
+        email: store.email ? "" : "Email is required",
+        password: store.password ? "" : "Password is required",
+      }));
+      return;
+    }
+
+    // TODO : Uncomment later
+    // const emailValidated = emailSchema.test(store.email);
+    // const passwordValidated = passwordSchema.test(store.password);
+
+    // if (!emailValidated || !passwordValidated) {
+    //   setError((prev) => ({
+    //     ...prev,
+    //     email: emailValidated ? "" : "Invalid email address",
+    //     password: passwordValidated
+    //       ? ""
+    //       : "Password must contain minimum 8 characters, one uppercase, one number and one special character",
+    //   }));
+    //   return;
+    // }
+    signupUser({
+      name: store.name,
+      username: store.username,
+      email: store.email,
+      password: store.password,
+    })
+      .unwrap()
+      .then((res) => {
+        dispatch(authFormActions.setUser(res.data.profile));
+        toast.success("Sign up successful");
+        navigate("/nests");
+      })
+      .catch(() => {
+        toast.error("Sign up failed");
+      });
   };
 
   return (
@@ -33,37 +154,43 @@ const Auth = () => {
       {!isLogin && (
         <FMNTextBox
           value={store.name}
-          setValue={(value) => dispatch(loginActions.setName(value))}
+          setValue={(value) => handleChange("name", value)}
           label="Name"
+          error={error.name}
         />
       )}
 
       <FMNTextBox
         required
         value={store.username}
-        setValue={(value) => dispatch(loginActions.setUserName(value))}
+        setValue={(value) => handleChange("username", value)}
         label="Username"
+        error={error.username}
       />
 
       {!isLogin && (
         <FMNTextBox
           value={store.email}
-          setValue={(value) => dispatch(loginActions.setEmail(value))}
+          setValue={(value) => handleChange("email", value)}
           label="Email"
           required
+          error={error.email}
         />
       )}
 
       <FMNTextBox
         value={store.password}
-        setValue={(value) => dispatch(postActions.setPassword(value))}
+        setValue={(value) => handleChange("password", value)}
         label="Password"
         required
+        type="password"
+        error={error.password}
       />
       <div className="flex justify-center w-full">
         <FMNButton
           className="w-1/2"
-          onClick={() => toast.success("Form submitted")}
+          onClick={handleLoginOrSignup}
+          isLoading={loginLoading || signupLoading}
         >
           Submit
         </FMNButton>

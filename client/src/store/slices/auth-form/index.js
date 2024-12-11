@@ -5,9 +5,15 @@ const initialState = {
   username: "",
   email: "",
   password: "",
+  user: {
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+  },
 };
 
-export const login = createSlice({
+export const authForm = createSlice({
   name: "login",
   initialState,
   reducers: {
@@ -23,9 +29,17 @@ export const login = createSlice({
     setPassword: (state, action) => {
       state.password = action.payload;
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 
-export const loginActions = login.actions;
+const loginUser = (state) =>
+  state.authForm.user.username ? state.authForm.user : undefined;
 
-export const loginReducer = login.reducer;
+export const authFormSelectors = { loginUser };
+
+export const authFormActions = authForm.actions;
+
+export const authFormReducer = authForm.reducer;

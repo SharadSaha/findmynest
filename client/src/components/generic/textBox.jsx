@@ -24,6 +24,9 @@ const FMNTextBox = React.forwardRef(function TextBox(
         value={props.value || ""}
         onChange={(e) => props.setValue(e.target.value)}
       />
+      {props.error && (
+        <div className="text-sm text-red-500 mt-1">{props.error}</div>
+      )}
     </div>
   );
 });

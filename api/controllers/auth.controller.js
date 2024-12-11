@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, name } = req.body;
   console.log("body", req.body);
   const encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -11,11 +11,22 @@ export const register = async (req, res) => {
       data: {
         username,
         email,
+        name,
         password: encryptedPassword,
       },
     });
 
-    res.status(201).json({ message: `user ${user.username} created` });
+    res.status(201).json({
+      message: `user ${user.username} created`,
+      data: {
+        profile: {
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          password: user.password,
+        },
+      },
+    });
   } catch (error) {
     res
       .status(500)
@@ -61,7 +72,17 @@ export const login = async (req, res) => {
         maxAge,
       })
       .status(200)
-      .json({ message: "Login successful" });
+      .json({
+        message: "Login successful",
+        data: {
+          profile: {
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            password: user.password,
+          },
+        },
+      });
   } catch (error) {
     res
       .status(500)
