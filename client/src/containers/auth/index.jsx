@@ -5,10 +5,12 @@ import { postActions } from "../../store/slices/post";
 import FMNTextBox from "../../components/generic/textBox";
 import FMNButton from "../../components/generic/button";
 import { useState } from "react";
+import { useGetPokemonByNameQuery } from "../../services/login";
 
 const Auth = () => {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
+  const { data = [] } = useGetPokemonByNameQuery();
   const store = {
     name: useSelector((state) => state.login.name),
     username: useSelector((state) => state.login.username),
@@ -17,6 +19,7 @@ const Auth = () => {
   };
 
   const handleSetLoginOrSignUp = (e) => {
+    console.log(data);
     e.preventDefault();
     setIsLogin(!isLogin);
   };
