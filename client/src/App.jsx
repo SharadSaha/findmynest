@@ -10,7 +10,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/nests" element={<Home />}>
+          <Route path="/" element={<Home />}>
             <Route path="/nests/:propertyId" element={<PropertyDetail />} />
           </Route>
           <Route path="/auth" index element={<Auth />} />

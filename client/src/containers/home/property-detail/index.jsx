@@ -44,7 +44,7 @@ const PropertyDetail = () => {
 
   return (
     <div className="flex flex-col w-full h-full px-20 py-10">
-      <Link to="/nests">
+      <Link to="/">
         <ArrowBackIcon />
       </Link>
 

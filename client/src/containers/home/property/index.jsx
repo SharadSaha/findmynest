@@ -6,7 +6,7 @@ const Property = ({ id, name, description, imageUrl }) => {
 
   return (
     <div
-      className="flex relative max-w-[280px] max-h-[320px] w-full h-full rounded-2xl bg-center bg-cover duration-500 group cursor-pointer overflow-hidden"
+      className="flex relative max-w-[280px] max-h-[320px] w-[280px] h-[320px] rounded-2xl bg-center bg-cover duration-500 group cursor-pointer overflow-hidden"
       style={{
         boxShadow: "0 7px 10px rgba(0,0,0,0.30), 0 5px 5px rgba(0,0,0,0.22)",
       }}

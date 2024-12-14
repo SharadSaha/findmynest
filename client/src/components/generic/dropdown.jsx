@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Menu, MenuItem } from "@mui/material";
 
-const FMNDropdown = ({ items, anchorEl, handleClose }) => {
+const FMNDropdown = ({ items, anchorEl, handleClose, disabled }) => {
+  if (disabled) return null;
   const open = Boolean(anchorEl);
 
   return (
@@ -10,6 +11,7 @@ const FMNDropdown = ({ items, anchorEl, handleClose }) => {
         {items.map((item) => (
           <MenuItem
             key={item.value}
+            disabled={item.isDisabled}
             onClick={() => {
               handleClose();
               item.onClick();
