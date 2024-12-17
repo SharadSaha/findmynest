@@ -1,14 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  name: "",
+  title: "",
+  price: 100,
+  imgUrls: [],
+  lat: "",
+  long: "",
+  address: "",
+  city: "",
+  bedroomCount: 0,
+  bathroomCount: 0,
+  utilities: "",
+  petsPolicy: "",
+  incomePolicy: "",
+  size: 0,
+  schoolCount: 0,
+  busCount: 0,
+  restaurantCount: 0,
+  userActionType: "buy",
+  nestType: "apartment",
   description: "",
-  imageUrl: "",
-  location: "",
-  priceRange: {
-    low: "",
-    high: "",
-  },
 };
 
 export const postForm = createSlice({

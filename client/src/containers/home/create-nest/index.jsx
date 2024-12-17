@@ -1,22 +1,43 @@
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postFormActions } from "../../../store/slices/post-form/index";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { Slider } from "@mui/material";
+import toast from "react-hot-toast";
+import { useAddNestMutation } from "../../../services/nest";
+import FileUpload from "../../../components/file-upload";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const CreateEditNest = ({ mode, ...props }) => {
+const CreateEditNest = ({ mode = "create", ...props }) => {
   const dispatch = useDispatch();
+  const [addNest] = useAddNestMutation();
+  const [imgUrls, setImgUrls] = useState([]);
 
   const store = {
-    name: useSelector((state) => state.postForm.name),
+    title: useSelector((state) => state.postForm.title),
+    price: useSelector((state) => state.postForm.price),
+    lat: useSelector((state) => state.postForm.lat),
+    long: useSelector((state) => state.postForm.long),
+    address: useSelector((state) => state.postForm.address),
+    city: useSelector((state) => state.postForm.city),
+    bedroomCount: useSelector((state) => state.postForm.bedroomCount),
+    bathroomCount: useSelector((state) => state.postForm.bathroomCount),
+    utilities: useSelector((state) => state.postForm.utilities),
+    petsPolicy: useSelector((state) => state.postForm.petsPolicy),
+    incomePolicy: useSelector((state) => state.postForm.incomePolicy),
+    size: useSelector((state) => state.postForm.size),
+    schoolCount: useSelector((state) => state.postForm.schoolCount),
+    busCount: useSelector((state) => state.postForm.busCount),
+    restaurantCount: useSelector((state) => state.postForm.restaurantCount),
+    userActionType: useSelector((state) => state.postForm.userActionType),
+    nestType: useSelector((state) => state.postForm.nestType),
     description: useSelector((state) => state.postForm.description),
-    imageUrl: useSelector((state) => state.postForm.imageUrl),
-    location: useSelector((state) => state.postForm.location),
-    priceRange: useSelector((state) => state.postForm.priceRange),
   };
   const handleClose = (event, reason) => {
     if (reason && reason === "backdropClick") return;
@@ -26,6 +47,69 @@ const CreateEditNest = ({ mode, ...props }) => {
   const handleFormChange = (field, value) => {
     dispatch(postFormActions.setForm({ field, value }));
   };
+
+  const priceRange = [
+    {
+      value: 100,
+      label: <span className="text-gray-400">₹100</span>,
+    },
+    {
+      value: 10000000,
+      label: <span className="text-gray-400">₹10000000</span>,
+    },
+  ];
+  const valuetext = (value) => {
+    return `₹${value}`;
+  };
+
+  const handleValidation = () => {
+    return store.title && store.price && store.description;
+  };
+  const handleSubmit = () => {
+    console.log("store", store);
+
+    if (!handleValidation()) {
+      toast.error("Please fill all the required fields");
+      return;
+    }
+    if (mode === "create") {
+      addNest({
+        nest: {
+          title: store.title,
+          price: parseInt(store.price),
+          imgUrls: imgUrls.map((item) => item.url),
+          lat: parseInt(store.lat) || undefined,
+          long: parseInt(store.long) || undefined,
+          address: store.address,
+          city: store.city,
+          bedroomCount: parseInt(store.bedroomCount),
+          bathroomCount: parseInt(store.bathroomCount),
+          userActionType: store.userActionType,
+          nestType: store.nestType,
+          nestDetail: {
+            description: store.description,
+            utilities: store.utilities,
+            petsPolicy: store.petsPolicy,
+            incomePolicy: store.incomePolicy,
+            size: parseInt(store.size),
+            schoolCount: parseInt(store.schoolCount),
+            busCount: parseInt(store.busCount),
+            restaurantCount: parseInt(store.restaurantCount),
+          },
+        },
+      })
+        .unwrap()
+        .then(() => {
+          props.handleClose();
+        });
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      dispatch(postFormActions.resetForm());
+    };
+  }, []);
 
   return (
     <>
@@ -63,92 +147,296 @@ const CreateEditNest = ({ mode, ...props }) => {
               />
             </svg>
           </button>
-          <form className="space-y-6" onSubmit={props.handleSubmit}>
-            <div className="flex gap-5">
-              <div className="flex flex-col space-y-2">
-                <label
-                  htmlFor="image"
-                  className="text-gray-700 dark:text-gray-300"
-                >
-                  Image
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
-                  onChange={() => null}
+          <FileUpload
+            setState={(img) => setImgUrls((prev) => [...prev, img])}
+          />
+          {imgUrls.length > 0 && (
+            <div className="flex flex-wrap gap-5 overflow-y-scroll max-h-[200px] w-full my-5">
+              {imgUrls.map((img, index) => (
+                <img
+                  key={index}
+                  src={img.url}
+                  alt="img"
+                  className="w-[100px] h-[100px] object-cover"
                 />
-              </div>
-              <div className="flex flex-col space-y-2">
+              ))}
+            </div>
+          )}
+          <form
+            className="pt-5 space-y-6 overflow-scroll flex flex-col justify-center items-center"
+            onSubmit={props.handleSubmit}
+          >
+            <div className="flex gap-5 w-full">
+              <div className="flex flex-1 flex-col space-y-2">
                 <label
                   htmlFor="name"
                   className="text-gray-700 dark:text-gray-300"
                 >
-                  Name
+                  Title
                 </label>
                 <input
                   type="text"
                   id="name"
                   name="name"
                   className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
-                  value={store.name}
-                  onChange={(e) => handleFormChange("name", e.target.value)}
+                  value={store.title}
+                  onChange={(e) => handleFormChange("title", e.target.value)}
                 />
               </div>
             </div>
-            <div className="flex flex-col space-y-2">
-              <label
-                htmlFor="location"
-                className="text-gray-700 dark:text-gray-300"
-              >
-                Location
-              </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
-                value={""}
-                onChange={() => null}
-              />
-            </div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 w-full">
               <label
                 htmlFor="description"
                 className="text-gray-700 dark:text-gray-300"
               >
                 Description
               </label>
-              <textarea
-                id="description"
-                name="description"
-                className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+              <ReactQuill
+                theme="snow"
+                className="text-white"
                 value={store.description}
-                onChange={(e) =>
-                  handleFormChange("description", e.target.value)
-                }
+                onChange={(value) => handleFormChange("description", value)}
               />
             </div>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 w-full">
               <label
-                htmlFor="priceRange"
+                htmlFor="location"
                 className="text-gray-700 dark:text-gray-300"
               >
-                Price Range
+                Property Address
               </label>
               <input
-                type="number"
-                id="priceRange"
-                name="priceRange"
+                type="text"
+                id="location"
+                name="location"
                 className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
-                value={""}
-                onChange={() => null}
+                value={store.address}
+                onChange={(e) => handleFormChange("address", e.target.value)}
               />
+            </div>
+
+            <div className="flex gap-5 w-full justify-between items-center">
+              <div className="flex flex-col space-y-2">
+                <label
+                  htmlFor="city"
+                  className="text-gray-700 dark:text-gray-300"
+                >
+                  City
+                </label>
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                  value={store.city}
+                  onChange={(e) => handleFormChange("city", e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col w-full pr-10 pl-5">
+                <label
+                  htmlFor="price"
+                  className="text-gray-700 dark:text-gray-300"
+                >
+                  Price
+                </label>
+
+                <Slider
+                  size="small"
+                  defaultValue={100}
+                  aria-label="Small"
+                  valueLabelDisplay="auto"
+                  marks={priceRange}
+                  getAriaValueText={valuetext}
+                  step={10}
+                  className="text-white"
+                  min={100}
+                  max={10000000}
+                  value={store.price}
+                  onChange={(e) => handleFormChange("price", e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Property Details */}
+            <div className="flex gap-5 w-full justify-between">
+              <div className="flex flex-col space-y-2">
+                <label
+                  htmlFor="type"
+                  className="text-gray-700 dark:text-gray-300"
+                >
+                  Listing Type
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                  value={store.userActionType}
+                  onChange={(e) =>
+                    handleFormChange("userActionType", e.target.value)
+                  }
+                >
+                  <option value="rent">Rent</option>
+                  <option value="buy">Buy</option>
+                </select>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label
+                  htmlFor="lattitude"
+                  className="text-gray-700 dark:text-gray-300"
+                >
+                  Lattitude
+                </label>
+                <input
+                  type="number"
+                  id="lattitude"
+                  name="lattitude"
+                  className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                  value={store.lat}
+                  onChange={(e) => handleFormChange("lat", e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label
+                  htmlFor="longitude"
+                  className="text-gray-700 dark:text-gray-300"
+                >
+                  Longitude
+                </label>
+                <input
+                  type="number"
+                  id="longitude"
+                  name="longitude"
+                  className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                  value={store.long}
+                  onChange={(e) => handleFormChange("long", e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label
+                  htmlFor="type"
+                  className="text-gray-700 dark:text-gray-300"
+                >
+                  Property Type
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                  value={store.nestType}
+                  onChange={(e) => handleFormChange("nestType", e.target.value)}
+                >
+                  <option value="appartment">Apartment</option>
+                  <option value="house">House</option>
+                  <option value="condo">Condo</option>
+                  <option value="land">Land</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col space-y-2 mt-5 w-full pt-10">
+              <h1 className="text-lg font-bold text-white">Utilities</h1>
+              <div className="flex flex-col gap-5 w-full justify-between">
+                <div className="flex gap-5 justify-between">
+                  <div className="flex flex-col space-y-2">
+                    <label
+                      htmlFor="noOfSchools"
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      No of Schools
+                    </label>
+                    <input
+                      type="number"
+                      id="noOfSchools"
+                      name="noOfSchools"
+                      className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                      value={store.schoolCount}
+                      onChange={(e) =>
+                        handleFormChange("schoolCount", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label
+                      htmlFor="noOfRestaurants"
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      No of Restaurants
+                    </label>
+                    <input
+                      type="number"
+                      id="noOfRestaurants"
+                      name="noOfRestaurants"
+                      className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                      value={store.restaurantCount}
+                      onChange={(e) =>
+                        handleFormChange("restaurantCount", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label
+                      htmlFor="totalSize"
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      Total Size (in sq ft)
+                    </label>
+                    <input
+                      type="number"
+                      id="totalSize"
+                      name="totalSize"
+                      className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                      value={store.size}
+                      onChange={(e) => handleFormChange("size", e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-5 justify-between">
+                  <div className="flex flex-col space-y-2">
+                    <label
+                      htmlFor="noOfBedrooms"
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      No of Bedrooms
+                    </label>
+                    <input
+                      type="number"
+                      id="noOfBedrooms"
+                      name="noOfBedrooms"
+                      className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                      value={store.bedroomCount}
+                      onChange={(e) =>
+                        handleFormChange("bedroomCount", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <label
+                      htmlFor="noOfBathrooms"
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      No of Bathrooms
+                    </label>
+                    <input
+                      type="number"
+                      id="noOfBathrooms"
+                      name="noOfBathrooms"
+                      className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"
+                      value={store.bathroomCount}
+                      onChange={(e) =>
+                        handleFormChange("bathroomCount", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+              className="text-white font-medium"
             >
               {mode === "edit" ? "Update" : "Create"}
             </button>

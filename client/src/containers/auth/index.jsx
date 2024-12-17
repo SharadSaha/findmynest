@@ -94,7 +94,7 @@ const Auth = () => {
         .then((res) => {
           dispatch(authFormActions.setUser(res.data.profile));
           toast.success("Login successful");
-          navigate("/nests");
+          navigate("/");
         })
         .catch(() => {
           toast.error("Invalid credentials");
@@ -138,7 +138,7 @@ const Auth = () => {
       .then((res) => {
         dispatch(authFormActions.setUser(res.data.profile));
         toast.success("Sign up successful");
-        navigate("/nests");
+        navigate("/");
       })
       .catch(() => {
         toast.error("Sign up failed");
@@ -146,66 +146,68 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-4 w-1/3 justify-center ">
-      <div className="text-xl font-semibold text-gray-700 text-center">
-        {isLogin ? "Login to findmyNest" : "Create an account"}
-      </div>
+    <div className="flex justify-center items-center w-full pt-20">
+      <div className="flex flex-col space-y-4 w-1/3 justify-center">
+        <div className="text-xl font-semibold text-gray-700 text-center">
+          {isLogin ? "Login to findmyNest" : "Create an account"}
+        </div>
 
-      {!isLogin && (
+        {!isLogin && (
+          <FMNTextBox
+            value={store.name}
+            setValue={(value) => handleChange("name", value)}
+            label="Name"
+            error={error.name}
+          />
+        )}
+
         <FMNTextBox
-          value={store.name}
-          setValue={(value) => handleChange("name", value)}
-          label="Name"
-          error={error.name}
-        />
-      )}
-
-      <FMNTextBox
-        required
-        value={store.username}
-        setValue={(value) => handleChange("username", value)}
-        label="Username"
-        error={error.username}
-      />
-
-      {!isLogin && (
-        <FMNTextBox
-          value={store.email}
-          setValue={(value) => handleChange("email", value)}
-          label="Email"
           required
-          error={error.email}
+          value={store.username}
+          setValue={(value) => handleChange("username", value)}
+          label="Username"
+          error={error.username}
         />
-      )}
 
-      <FMNTextBox
-        value={store.password}
-        setValue={(value) => handleChange("password", value)}
-        label="Password"
-        required
-        type="password"
-        error={error.password}
-      />
-      <div className="flex justify-center w-full">
-        <FMNButton
-          className="w-1/2"
-          onClick={handleLoginOrSignup}
-          isLoading={loginLoading || signupLoading}
-        >
-          Submit
-        </FMNButton>
-      </div>
-      <div className="text-center mt-4">
-        <span className="text-gray-400 text-sm">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <a
-            href="/login"
-            className="text-gray-500 hover:underline"
-            onClick={handleSetLoginOrSignUp}
+        {!isLogin && (
+          <FMNTextBox
+            value={store.email}
+            setValue={(value) => handleChange("email", value)}
+            label="Email"
+            required
+            error={error.email}
+          />
+        )}
+
+        <FMNTextBox
+          value={store.password}
+          setValue={(value) => handleChange("password", value)}
+          label="Password"
+          required
+          type="password"
+          error={error.password}
+        />
+        <div className="flex justify-center w-full">
+          <FMNButton
+            className="w-1/2"
+            onClick={handleLoginOrSignup}
+            isLoading={loginLoading || signupLoading}
           >
-            {isLogin ? "Sign Up" : "Sign In"}
-          </a>
-        </span>
+            Submit
+          </FMNButton>
+        </div>
+        <div className="text-center mt-4">
+          <span className="text-gray-400 text-sm">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+            <a
+              href="/login"
+              className="text-gray-500 hover:underline"
+              onClick={handleSetLoginOrSignUp}
+            >
+              {isLogin ? "Sign Up" : "Sign In"}
+            </a>
+          </span>
+        </div>
       </div>
     </div>
   );

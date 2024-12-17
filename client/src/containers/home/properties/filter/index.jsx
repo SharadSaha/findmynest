@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import FMNSingleSelect from "../../../components/generic/single-select";
-import FMNButton from "../../../components/generic/button";
+import FMNSingleSelect from "../../../../components/generic/single-select";
+import FMNButton from "../../../../components/generic/button";
 
 const Filter = () => {
   const [searchTerm, setSearchTerm] = useState("");

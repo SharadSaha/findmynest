@@ -3,7 +3,6 @@ import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
   const { username, email, password, name } = req.body;
-  console.log("body", req.body);
   const encryptedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -66,6 +65,7 @@ export const login = async (req, res) => {
       { expiresIn: maxAge }
     );
 
+    console.log("jwtToken", jwtToken);
     res
       .cookie("token", jwtToken, {
         httpOnly: true,

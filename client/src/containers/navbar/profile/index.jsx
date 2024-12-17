@@ -18,6 +18,21 @@ const Profile = () => {
     {
       value: "Profile",
       text: "profile",
+      onClick: () => {
+        logoutUser()
+          .unwrap()
+          .then(() => {
+            navigate("/profile");
+          });
+      },
+    },
+    {
+      value: "Login/Signup",
+      text: "login/signup",
+      onClick: () => {
+        navigate("/auth");
+      },
+      isDisabled: store.loginUser,
     },
     {
       value: "Logout",
