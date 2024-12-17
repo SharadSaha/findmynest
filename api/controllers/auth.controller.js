@@ -65,7 +65,6 @@ export const login = async (req, res) => {
       { expiresIn: maxAge }
     );
 
-    console.log("jwtToken", jwtToken);
     res
       .cookie("token", jwtToken, {
         httpOnly: true,
@@ -81,6 +80,7 @@ export const login = async (req, res) => {
             email: user.email,
             password: user.password,
           },
+          token: jwtToken,
         },
       });
   } catch (error) {

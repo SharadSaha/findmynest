@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get("/", getAllNests);
 router.get("/:id", getNest);
-router.post("/", addNest);
+router.post("/", verifyToken, addNest);
 router.put("/:id", updateNest);
 router.delete("/:id", deleteNest);
 

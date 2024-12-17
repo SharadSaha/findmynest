@@ -93,6 +93,8 @@ const Auth = () => {
         .unwrap()
         .then((res) => {
           dispatch(authFormActions.setUser(res.data.profile));
+          sessionStorage.setItem("token", res.data.token);
+
           toast.success("Login successful");
           navigate("/");
         })

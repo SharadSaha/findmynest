@@ -86,16 +86,16 @@ const CreateEditNest = ({ mode = "create", ...props }) => {
           bathroomCount: parseInt(store.bathroomCount),
           userActionType: store.userActionType,
           nestType: store.nestType,
-          nestDetail: {
-            description: store.description,
-            utilities: store.utilities,
-            petsPolicy: store.petsPolicy,
-            incomePolicy: store.incomePolicy,
-            size: parseInt(store.size),
-            schoolCount: parseInt(store.schoolCount),
-            busCount: parseInt(store.busCount),
-            restaurantCount: parseInt(store.restaurantCount),
-          },
+        },
+        nestDetail: {
+          description: store.description,
+          utilities: store.utilities,
+          petsPolicy: store.petsPolicy,
+          incomePolicy: store.incomePolicy,
+          size: parseInt(store.size),
+          schoolCount: parseInt(store.schoolCount),
+          busCount: parseInt(store.busCount),
+          restaurantCount: parseInt(store.restaurantCount),
         },
       })
         .unwrap()

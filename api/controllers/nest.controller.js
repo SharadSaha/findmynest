@@ -42,7 +42,7 @@ export const addNest = async (req, res) => {
     const newNest = await prisma.nest.create({
       data: {
         ...req.body.nest,
-        userId: tokenUserId,
+        user: req.user,
         nestDetail: {
           create: req.body.nestDetail,
         },
