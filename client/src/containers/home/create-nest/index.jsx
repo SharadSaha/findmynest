@@ -1,13 +1,17 @@
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postFormActions } from "../../../store/slices/post-form/index";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Slider } from "@mui/material";
 import toast from "react-hot-toast";
-import { useAddNestMutation } from "../../../services/nest";
+import {
+  useAddNestMutation,
+  useLazyGetAllNestsQuery,
+  useUpdateNestMutation,
+} from "../../../services/nest";
 import FileUpload from "../../../components/file-upload";
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -17,7 +21,8 @@ const Transition = forwardRef(function Transition(props, ref) {
 const CreateEditNest = ({ mode = "create", ...props }) => {
   const dispatch = useDispatch();
   const [addNest] = useAddNestMutation();
-  const [imgUrls, setImgUrls] = useState([]);
+  const [updateNest] = useUpdateNestMutation();
+  const [fetchMarkers] = useLazyGetAllNestsQuery();
 
   const store = {
     title: useSelector((state) => state.postForm.title),
@@ -38,11 +43,15 @@ const CreateEditNest = ({ mode = "create", ...props }) => {
     userActionType: useSelector((state) => state.postForm.userActionType),
     nestType: useSelector((state) => state.postForm.nestType),
     description: useSelector((state) => state.postForm.description),
+    imgUrls: useSelector((state) => state.postForm.imgUrls),
+    user: useSelector((state) => state.authForm.user),
   };
-  const handleClose = (event, reason) => {
-    if (reason && reason === "backdropClick") return;
-    props.handleClose();
-  };
+
+  const [imgUrls, setImgUrls] = useState(
+    store.imgUrls?.map((img) => ({
+      url: img,
+    })) || []
+  );
 
   const handleFormChange = (field, value) => {
     dispatch(postFormActions.setForm({ field, value }));
@@ -62,12 +71,15 @@ const CreateEditNest = ({ mode = "create", ...props }) => {
     return `₹${value}`;
   };
 
+  const handleFormClose = () => {
+    dispatch(postFormActions.resetForm());
+    props.handleClose();
+  };
+
   const handleValidation = () => {
     return store.title && store.price && store.description;
   };
   const handleSubmit = () => {
-    console.log("store", store);
-
     if (!handleValidation()) {
       toast.error("Please fill all the required fields");
       return;
@@ -78,14 +90,15 @@ const CreateEditNest = ({ mode = "create", ...props }) => {
           title: store.title,
           price: parseInt(store.price),
           imgUrls: imgUrls.map((item) => item.url),
-          lat: parseInt(store.lat) || undefined,
-          long: parseInt(store.long) || undefined,
+          lat: store.lat,
+          long: store.long,
           address: store.address,
           city: store.city,
           bedroomCount: parseInt(store.bedroomCount),
           bathroomCount: parseInt(store.bathroomCount),
           userActionType: store.userActionType,
           nestType: store.nestType,
+          userId: store.user.id,
         },
         nestDetail: {
           description: store.description,
@@ -100,22 +113,49 @@ const CreateEditNest = ({ mode = "create", ...props }) => {
       })
         .unwrap()
         .then(() => {
-          props.handleClose();
+          handleFormClose();
         });
+      return;
     }
+    updateNest({
+      id: props.id,
+      nest: {
+        title: store.title,
+        price: parseInt(store.price),
+        imgUrls: imgUrls.map((item) => item.url),
+        lat: store.lat,
+        long: store.long,
+        address: store.address,
+        city: store.city,
+        bedroomCount: parseInt(store.bedroomCount),
+        bathroomCount: parseInt(store.bathroomCount),
+        userActionType: store.userActionType,
+        nestType: store.nestType,
+        userId: store.user.id,
+      },
+      nestDetail: {
+        description: store.description,
+        utilities: store.utilities,
+        petsPolicy: store.petsPolicy,
+        incomePolicy: store.incomePolicy,
+        size: parseInt(store.size),
+        schoolCount: parseInt(store.schoolCount),
+        busCount: parseInt(store.busCount),
+        restaurantCount: parseInt(store.restaurantCount),
+      },
+    })
+      .unwrap()
+      .then(() => {
+        handleFormClose();
+        fetchMarkers();
+      });
   };
-
-  useEffect(() => {
-    return () => {
-      dispatch(postFormActions.resetForm());
-    };
-  }, []);
 
   return (
     <>
       <Dialog
         open
-        onClose={handleClose}
+        onClose={handleFormClose}
         TransitionComponent={Transition}
         className="rounded-2xl"
         sx={{
@@ -130,7 +170,7 @@ const CreateEditNest = ({ mode = "create", ...props }) => {
           <button
             type="button"
             className="absolute top-3 right-2 p-3 text-gray-700 dark:text-gray-300 hover:text-gray-500"
-            onClick={handleClose}
+            onClick={handleFormClose}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

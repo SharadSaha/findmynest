@@ -1,7 +1,7 @@
 import { gsap } from "gsap";
 import { useEffect, useRef } from "react";
 import "./style.css";
-import headerImage from "../../../assets/images";
+import { headerImage } from "../../../assets/images";
 
 const Header = () => {
   const textRef = useRef();

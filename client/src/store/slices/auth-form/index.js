@@ -6,6 +6,7 @@ const initialState = {
   email: "",
   password: "",
   user: {
+    id: "",
     name: "",
     username: "",
     email: "",

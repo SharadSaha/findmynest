@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { noPropertyImage } from "../../../../assets/images";
+import PlaceIcon from "@mui/icons-material/Place";
 
 const Property = ({ property }) => {
   const navigate = useNavigate();
@@ -12,25 +14,39 @@ const Property = ({ property }) => {
       >
         <img
           className="w-full h-full rounded-2xl group-hover:brightness-75 transition duration-500 ease-in-out transform hover:scale-110"
-          src={property.imgUrls?.[0]}
+          src={property.imgUrls?.[0] || noPropertyImage}
           alt={name}
           loading="lazy"
+          onClick={() => navigate(`/nests/${property.id}`)}
         />
       </div>
       <div className="flex flex-col w-full gap-2">
         <div
-          className="font-bold truncate cursor-pointer hover:underline"
+          className="font-bold truncate cursor-pointer text-gray-700 hover:underline"
           onClick={() => navigate(`/nests/${property.id}`)}
         >
           {property.title}
         </div>
-        <div className="text-sm truncate">{property.description}</div>
-        <div className="font-bold">₹ {property.price.toLocaleString()}</div>
-        <div className="text-sm">
+        <div className="text-sm truncate text-gray-500">
+          {property.description}
+        </div>
+        <div className="font-bold text-brown-500">
+          ₹ {property.price.toLocaleString()}
+        </div>
+        <div className="text-sm text-gray-600">
           {property.size} sqft | {property.bathroomCount} Bathrooms |{" "}
           {property.bedroomCount} Bedrooms
         </div>
-        <div className="hover:underline cursor-pointer">View Details</div>
+        <div className="flex items-center gap-2">
+          <PlaceIcon fontSize="small" />
+          <div className="text-sm text-gray-700">{property.city}</div>
+        </div>
+        <div
+          className="hover:underline cursor-pointer text-gray-700"
+          onClick={() => navigate(`/nests/${property.id}`)}
+        >
+          View Details
+        </div>
       </div>
     </div>
   );

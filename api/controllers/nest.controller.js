@@ -2,8 +2,8 @@ import prisma from "../lib/prisma.js";
 
 export const getAllNests = async (req, res) => {
   try {
-    const nests = prisma.nest.findMany();
-    res.status(200).json(nest);
+    const nests = await prisma.nest.findMany();
+    res.status(200).json({ data: nests });
   } catch (err) {
     // console.log(err);
     res
@@ -15,7 +15,7 @@ export const getAllNests = async (req, res) => {
 export const getNest = async (req, res) => {
   try {
     const { id } = req.params;
-    const nest = prisma.nest.findUnique({
+    const nest = await prisma.nest.findUnique({
       where: { id },
       include: {
         nestDetail: true,
@@ -23,26 +23,49 @@ export const getNest = async (req, res) => {
           select: {
             id: true,
             username: true,
-            avatar: true,
+            name: true,
+            email: true,
+            photo: true,
           },
         },
       },
     });
-    res.status(200).json(nest);
+    res.status(200).json({ data: nest });
+  } catch (err) {
+    // console.log(err);
+    res.status(500).json({ message: `${err.message} -- Failed to get nest` });
+  }
+};
+export const getNestsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const nests = await prisma.nest.findMany({
+      where: { userId },
+      include: {
+        nestDetail: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            photo: true,
+          },
+        },
+      },
+    });
+    res.status(200).json({ data: nests });
   } catch (err) {
     // console.log(err);
     res
       .status(500)
-      .json({ message: `${err.message} -- Failed to get all nests` });
+      .json({ message: `${err.message} -- Failed to get nests by user` });
   }
 };
+
 export const addNest = async (req, res) => {
-  const tokenUserId = req.userId;
   try {
     const newNest = await prisma.nest.create({
       data: {
         ...req.body.nest,
-        user: req.user,
         nestDetail: {
           create: req.body.nestDetail,
         },
@@ -51,19 +74,27 @@ export const addNest = async (req, res) => {
     res.status(200).json(newNest);
   } catch (err) {
     // console.log(err);
-    res
-      .status(500)
-      .json({ message: `${err.message} -- Failed to get all nests` });
+    res.status(500).json({ message: `${err.message} -- Failed to add nest` });
   }
 };
 export const updateNest = async (req, res) => {
   try {
+    const { id } = req.params;
+    await prisma.nest.update({
+      where: { id },
+      data: {
+        ...req.body.nest,
+        nestDetail: {
+          update: req.body.nestDetail,
+        },
+      },
+    });
     res.status(200).json({ message: "All nests" });
   } catch (err) {
     // console.log(err);
     res
       .status(500)
-      .json({ message: `${err.message} -- Failed to get all nests` });
+      .json({ message: `${err.message} -- Failed to update nest` });
   }
 };
 export const deleteNest = async (req, res) => {
@@ -80,6 +111,23 @@ export const deleteNest = async (req, res) => {
     // console.log(err);
     res
       .status(500)
-      .json({ message: `${err.message} -- Failed to get all nests` });
+      .json({ message: `${err.message} -- Failed to delete nest` });
+  }
+};
+
+export const getCityList = async (req, res) => {
+  console.log("getCityList");
+  try {
+    const cities = await prisma.nest.findMany({
+      select: {
+        city: true,
+      },
+      distinct: ["city"],
+    });
+    res.status(200).json({ data: cities.map((cityRecord) => cityRecord.city) });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: `${err.message} -- Failed to get unique cities` });
   }
 };

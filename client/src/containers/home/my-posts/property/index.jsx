@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { noPropertyImage } from "../../../../assets/images";
 
-const Property = ({ id, name, description, imageUrl }) => {
+const MyPost = ({ id, imgUrls, ...props }) => {
   const navigate = useNavigate();
 
   return (
@@ -14,20 +15,20 @@ const Property = ({ id, name, description, imageUrl }) => {
     >
       <img
         className="w-full h-full rounded-2xl group-hover:brightness-75 transition duration-500 ease-in-out transform hover:scale-110"
-        src={imageUrl}
+        src={imgUrls?.[0] || noPropertyImage}
         alt={name}
         loading="lazy"
       />
 
       <div className="absolute bottom-0 left-0 p-4 text-white w-full overflow-hidden text-sm font-regular">
         <div className="truncate font-bold flex items-center justify-between">
-          {name}
+          {props.title}
           <StarBorderIcon fontSize="small" className="text-white" />
         </div>
-        <div className="truncate">{description}</div>
+        <div className="truncate">{props.nestDetail.description}</div>
       </div>
     </div>
   );
 };
 
-export default Property;
+export default MyPost;

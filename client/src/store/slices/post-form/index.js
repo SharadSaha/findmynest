@@ -30,6 +30,7 @@ export const postForm = createSlice({
       const { field, value } = action.payload;
       state[field] = value;
     },
+    setState: (state, action) => ({ ...state, ...action.payload }),
     resetForm: () => ({ ...initialState }),
   },
 });

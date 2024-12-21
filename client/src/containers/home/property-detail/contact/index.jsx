@@ -2,6 +2,7 @@ import { Dialog, Slide } from "@mui/material";
 import { forwardRef, useState } from "react";
 import FMNButton from "../../../../components/generic/button";
 import toast from "react-hot-toast";
+import { noUserImage } from "../../../../assets/images";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -64,13 +65,13 @@ const ContactForm = ({ handleClose, ownerDetails }) => {
         <div className="flex gap-4 items-center">
           <img
             className="w-12 h-12 rounded-full"
-            src={ownerDetails.photo}
+            src={ownerDetails.photo || noUserImage}
             alt={ownerDetails.name}
           />
           <div className="flex flex-col">
             <span className="font-bold">{ownerDetails.name}</span>
             <span className="text-sm">
-              {ownerDetails.email} - {ownerDetails.phone}
+              {ownerDetails.username} - {ownerDetails.email}
             </span>
           </div>
         </div>

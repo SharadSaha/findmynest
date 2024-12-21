@@ -9,7 +9,6 @@ const UserProfile = () => {
     user: useSelector((state) => state.authForm.user),
   };
 
-  console.log(store.user);
   return (
     <div className="flex items-center justify-center p-20 w-full gap-10">
       <div className="flex items-center justify-center">

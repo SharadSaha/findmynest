@@ -19,6 +19,7 @@ export const register = async (req, res) => {
       message: `user ${user.username} created`,
       data: {
         profile: {
+          id: user.id,
           name: user.name,
           username: user.username,
           email: user.email,
@@ -75,6 +76,7 @@ export const login = async (req, res) => {
         message: "Login successful",
         data: {
           profile: {
+            id: user.id,
             name: user.name,
             username: user.username,
             email: user.email,

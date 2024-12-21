@@ -11,22 +11,8 @@ const FMNMap = ({
   ],
 }) => {
   return (
-    <APIProvider
-      apiKey={API_KEY}
-      onLoad={() => console.log("Maps API has loaded.")}
-    >
-      <Map
-        defaultZoom={13}
-        defaultCenter={markers[0]}
-        onCameraChanged={(ev) =>
-          console.log(
-            "camera changed:",
-            ev.detail.center,
-            "zoom:",
-            ev.detail.zoom
-          )
-        }
-      >
+    <APIProvider apiKey={API_KEY}>
+      <Map defaultZoom={13} defaultCenter={markers[0]}>
         {markers.map((marker, index) => (
           <Marker key={index} position={marker} />
         ))}
