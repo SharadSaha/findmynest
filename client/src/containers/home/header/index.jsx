@@ -2,9 +2,12 @@ import { gsap } from "gsap";
 import { useEffect, useRef } from "react";
 import "./style.css";
 import { headerImage } from "../../../assets/images";
+import { useDispatch } from "react-redux";
+import { filterActions } from "../../../store/slices/filter";
 
 const Header = () => {
   const textRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     gsap.fromTo(
@@ -24,6 +27,21 @@ const Header = () => {
     );
   }, []);
 
+  const handleSearch = (e) => {
+    if (e.key === "Enter") {
+      const element = document.getElementById("properties");
+      element.scrollIntoView({ behavior: "smooth" });
+      if (!e.target.value) {
+        dispatch(filterActions.resetFilter());
+        return;
+      }
+      dispatch(
+        filterActions.setFilter({ search: e.target.value, isApplied: true })
+      );
+      e.target.blur();
+    }
+  };
+
   return (
     <div
       className="bg-no-repeat bg-center bg-cover header-container h-[500px] rounded-lg shadow-lg p-4 flex flex-col items-center justify-center"
@@ -36,6 +54,7 @@ const Header = () => {
             type="text"
             className="w-full px-4 py-2 rounded-full focus:outline-none"
             placeholder="Enter location or keyword..."
+            onKeyDown={handleSearch}
           />
         </div>
         <h1 ref={textRef} className="text-white text-4xl font-bold pb-10">

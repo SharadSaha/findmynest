@@ -25,6 +25,13 @@ export const loginApi = createApi({
         method: "POST",
       }),
     }),
+    updateUser: builder.mutation({
+      query: ({ userId, ...payload }) => ({
+        url: `auth/${userId}`,
+        method: "PUT",
+        body: payload.user,
+      }),
+    }),
   }),
 });
 
@@ -32,4 +39,5 @@ export const {
   useLoginUserMutation,
   useSignupUserMutation,
   useLogoutUserMutation,
+  useUpdateUserMutation,
 } = loginApi;

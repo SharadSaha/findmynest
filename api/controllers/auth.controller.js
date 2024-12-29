@@ -24,6 +24,7 @@ export const register = async (req, res) => {
           username: user.username,
           email: user.email,
           password: user.password,
+          photo: user.photo,
         },
       },
     });
@@ -81,6 +82,7 @@ export const login = async (req, res) => {
             username: user.username,
             email: user.email,
             password: user.password,
+            photo: user.photo,
           },
           token: jwtToken,
         },
@@ -89,6 +91,29 @@ export const login = async (req, res) => {
     res
       .status(500)
       .json({ message: `${error.message} -- Failed to login user` });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { name, username, email, photo } = req.body;
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+        username,
+        email,
+        photo,
+      },
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: `${error.message} -- Failed to update user` });
   }
 };
 

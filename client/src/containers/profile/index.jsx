@@ -2,9 +2,13 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FileUpload from "../../components/file-upload";
 import { authFormActions } from "../../store/slices/auth-form";
+import { useUpdateUserMutation } from "../../services/login";
+import { noUserImage } from "../../assets/images";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
+  const [updateUser] = useUpdateUserMutation();
+
   const store = {
     user: useSelector((state) => state.authForm.user),
   };
@@ -12,11 +16,11 @@ const UserProfile = () => {
   return (
     <div className="flex items-center justify-center p-20 w-full gap-10">
       <div className="flex items-center justify-center">
-        {store.user?.avatarUrl ? (
+        {store.user?.photo ? (
           <div className="md:w-48 md:h-48 p-1 bg-white rounded-full flex items-center justify-center ring-1 ring-blue-500 ring-opacity-50">
             <div className="bg-white rounded-full w-32 h-32 overflow-hidden">
               <img
-                src={store.user.avatarUrl}
+                src={store.user.photo || noUserImage}
                 className="w-full h-full object-cover"
                 alt="user avatar"
               />
@@ -24,11 +28,16 @@ const UserProfile = () => {
           </div>
         ) : (
           <FileUpload
-            setState={(img) =>
-              dispatch(
-                authFormActions.setUser({ ...store.user, avatarUrl: img.url })
-              )
-            }
+            setState={(img) => {
+              updateUser({
+                userId: store.user.id,
+                user: { ...store.user, photo: img.url },
+              }).then(() => {
+                dispatch(
+                  authFormActions.setUser({ ...store.user, photo: img.url })
+                );
+              });
+            }}
           />
         )}
       </div>

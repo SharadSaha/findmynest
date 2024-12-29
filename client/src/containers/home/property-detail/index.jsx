@@ -11,6 +11,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import CreateEditNest from "../create-nest";
 import { useDispatch, useSelector } from "react-redux";
 import { postFormActions } from "../../../store/slices/post-form";
+import KingBedIcon from "@mui/icons-material/KingBed";
+import BathroomIcon from "@mui/icons-material/Bathroom";
+import DescriptionIcon from "@mui/icons-material/Description";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CategoryIcon from "@mui/icons-material/Category";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 
 const PropertyDetail = () => {
   const [contactModal, setContactModal] = useState(false);
@@ -115,13 +121,19 @@ const PropertyDetail = () => {
             <h2 className="text-2xl font-bold mb-4">About this property</h2>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-white rounded p-4">
-                <p className="font-bold text-gray-700">Description</p>
+                <span className="flex items-center gap-2">
+                  <DescriptionIcon />
+                  <p className="font-bold text-gray-700">Description: </p>
+                </span>
                 <p className="text-gray-600">
                   {property?.nestDetail?.description}
                 </p>
               </div>
               <div className="bg-white rounded p-4">
-                <p className="font-bold text-gray-700">Location</p>
+                <span className="flex items-center gap-2">
+                  <LocationOnIcon />
+                  <p className="font-bold text-gray-700">Location: </p>
+                </span>
                 <p className="text-gray-600">
                   {property?.city}, {property?.address}
                 </p>
@@ -129,15 +141,24 @@ const PropertyDetail = () => {
             </div>
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="bg-white rounded p-4">
-                <p className="font-bold text-gray-700">Beds: </p>
+                <span className="flex items-center gap-2">
+                  <KingBedIcon />
+                  <p className="font-bold text-gray-700">Beds: </p>
+                </span>
                 <p className="text-gray-600">{property?.bedroomCount}</p>
               </div>
               <div className="bg-white rounded p-4">
-                <p className="font-bold text-gray-700">Baths: </p>
+                <span className="flex items-center gap-2">
+                  <BathroomIcon />
+                  <p className="font-bold text-gray-700">Bathrooms: </p>
+                </span>
                 <p className="text-gray-600">{property?.bathroomCount}</p>
               </div>
               <div className="bg-white rounded p-4">
-                <p className="font-bold text-gray-700">Type: </p>
+                <span className="flex items-center gap-2">
+                  <CategoryIcon />
+                  <p className="font-bold text-gray-700">Type: </p>
+                </span>
                 <p className="text-gray-600">{property?.nestType}</p>
               </div>
               <div className="bg-white rounded p-4">
@@ -145,7 +166,10 @@ const PropertyDetail = () => {
                 <p className="text-gray-600">{property?.userActionType}</p>
               </div>
               <div className="bg-white rounded p-4">
-                <p className="font-bold text-gray-700">Price: </p>
+                <span className="flex items-center gap-2">
+                  <CurrencyRupeeIcon />
+                  <p className="font-bold text-gray-700">Price: </p>
+                </span>
                 <p className="text-gray-600">
                   Rs. {property?.price.toLocaleString()}
                 </p>
@@ -172,24 +196,6 @@ const PropertyDetail = () => {
             <div className="text-2xl font-bold mb-4">View on Map</div>
             <FMNMap markers={uniqueMarkers} />
           </div>
-          {/* <h2 className="text-2xl font-bold my-4">Reviews</h2>
-          <ul className="list-disc pl-8">
-            {property.reviews.map((review) => (
-              <li key={review.name} className="mb-2">
-                <p className="font-bold">{review.name}</p>
-                <p>
-                  {Array(review.rating)
-                    .fill(0)
-                    .map((_, i) => (
-                      <span key={i} className="text-yellow-500">
-                        &#9733;
-                      </span>
-                    ))}
-                </p>
-                <p>{review.review}</p>
-              </li>
-            ))}
-          </ul> */}
         </div>
       </div>
       {contactModal && (

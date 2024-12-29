@@ -25,7 +25,12 @@ const Navbar = () => {
           findmyNest
         </div>
         <ul className="flex space-x-4 items-center">
-          <li className="flex items-center gap-2 cursor-pointer border border-gray-300 rounded-md px-2 py-1">
+          <li
+            className="flex items-center gap-2 cursor-pointer border border-gray-300 rounded-md px-2 py-1"
+            style={
+              !localStorage.getItem("token") ? { pointerEvents: "none", opacity: 0.5 } : {}
+            }
+          >
             <AddIcon className="text-gray-500 hover:text-gray-400" />
             <a
               onClick={() => setCreateOpen(true)}

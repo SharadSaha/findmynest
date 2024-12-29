@@ -3,6 +3,7 @@ import { forwardRef, useState } from "react";
 import FMNButton from "../../../../components/generic/button";
 import toast from "react-hot-toast";
 import { noUserImage } from "../../../../assets/images";
+import emailjs from "@emailjs/browser";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -20,6 +21,25 @@ const ContactForm = ({ handleClose, ownerDetails }) => {
       return;
     }
 
+    const templateParams = {
+      to_name: ownerDetails.name,
+      from_name: formData.name,
+      email_to: ownerDetails.email,
+      message: formData.message,
+    };
+
+    emailjs
+      .send("service_rk3wrvz", "template_o27986e", templateParams, {
+        publicKey: "X-vffdV6sW28oOIBG",
+      })
+      .then(
+        (response) => {
+          console.log("SUCCESS!", response.status, response.text);
+        },
+        (err) => {
+          console.log("FAILED...", err);
+        }
+      );
     toast.success("Message sent successfully");
     handleClose();
   };

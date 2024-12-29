@@ -93,7 +93,8 @@ const Auth = () => {
         .unwrap()
         .then((res) => {
           dispatch(authFormActions.setUser(res.data.profile));
-          sessionStorage.setItem("token", res.data.token);
+          localStorage.setItem("token", res.data.token);
+          sessionStorage.setItem("user", JSON.stringify(res.data.profile));
 
           toast.success("Login successful");
           navigate("/");
@@ -139,6 +140,9 @@ const Auth = () => {
       .unwrap()
       .then((res) => {
         dispatch(authFormActions.setUser(res.data.profile));
+        localStorage.setItem("token", res.data.token);
+        sessionStorage.setItem("user", JSON.stringify(res.data.profile));
+
         toast.success("Sign up successful");
         navigate("/");
       })

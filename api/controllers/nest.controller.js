@@ -2,7 +2,18 @@ import prisma from "../lib/prisma.js";
 
 export const getAllNests = async (req, res) => {
   try {
-    const nests = await prisma.nest.findMany();
+    const nests = await prisma.nest.findMany({
+      include: {
+        nestDetail: true,
+        user: {
+          select: {
+            id: true,
+            username: true,
+            photo: true,
+          },
+        },
+      },
+    });
     res.status(200).json({ data: nests });
   } catch (err) {
     // console.log(err);
@@ -116,7 +127,6 @@ export const deleteNest = async (req, res) => {
 };
 
 export const getCityList = async (req, res) => {
-  console.log("getCityList");
   try {
     const cities = await prisma.nest.findMany({
       select: {

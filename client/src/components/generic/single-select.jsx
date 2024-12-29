@@ -1,17 +1,20 @@
 const FMNSingleSelect = ({ size = "medium", ...props }) => {
   return (
-    <div className="flex flex-col">
-      <span className="text-gray-700 text-sm required">
+    <div className="flex flex-col gap-1">
+      <span className="text-gray-500 text-sm required">
         {props.label || ""} {props.required && "*"}
       </span>
       <div className="relative">
         <select
           className={`appearance-none w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none ${size}`}
-          placeholder={props.placeholder || "Enter"}
-          value={props.value}
           onChange={(e) => props.setValue(e.target.value)}
+          placeholder={props.placeholder || "Select"}
+          value={props.value}
           {...props}
         >
+          <option value="" disabled className="text-gray-800">
+            Select
+          </option>
           {props.options.map((option, index) => (
             <option key={index} value={option.value} className="text-gray-800">
               {option.value}

@@ -19,11 +19,7 @@ const Profile = () => {
       value: "Profile",
       text: "profile",
       onClick: () => {
-        logoutUser()
-          .unwrap()
-          .then(() => {
-            navigate("/profile");
-          });
+        navigate("/profile");
       },
     },
     {
@@ -41,6 +37,8 @@ const Profile = () => {
         logoutUser()
           .unwrap()
           .then(() => {
+            localStorage.removeItem("token");
+            sessionStorage.removeItem("user");
             navigate("/auth");
           });
       },
