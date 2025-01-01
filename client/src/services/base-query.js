@@ -6,7 +6,7 @@ export const baseQuery = () =>
     baseUrl: API_URL,
     credentials: "include",
     prepareHeaders: (headers) => {
-      const token = sessionStorage.getItem("token");
+      const token = localStorage.getItem("token");
       if (token) {
         headers.set("Authorization", `${token}`);
       }
