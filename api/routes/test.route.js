@@ -9,5 +9,6 @@ const router = express.Router();
 
 router.get("/logged-in-validate", verifyToken, validateLoggedInUser);
 router.get("/admin-validate", validateAdminUser);
+router.get("/test", (req, res) => res.status(200).json({ message: "test" }));
 
 export default router;
