@@ -1,7 +1,9 @@
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { Map, Marker } from "@vis.gl/react-google-maps";
 
-const API_KEY = "AIzaSyCWgWH3tv7asJro15RzgU5X29mUO22woRI";
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+console.log(GOOGLE_MAPS_API_KEY);
+
 const FMNMap = ({
   markers = [
     {
@@ -11,7 +13,7 @@ const FMNMap = ({
   ],
 }) => {
   return (
-    <APIProvider apiKey={API_KEY}>
+    <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
       <Map defaultZoom={13} defaultCenter={markers[0]}>
         {markers.map((marker, index) => (
           <Marker key={index} position={marker} />
