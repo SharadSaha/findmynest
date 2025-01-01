@@ -7,8 +7,6 @@ import cors from "cors";
 
 const app = express();
 
-const PORT = 8080;
-
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -21,6 +19,6 @@ app.use("/api/nest", nestRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${8080}...`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}...`);
 });
