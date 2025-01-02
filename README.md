@@ -92,5 +92,7 @@ Start the client
 - GitHub Repository: [https://github.com/SharadSaha/findmynest]
 
 ## Screenshots
-
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+<img src="https://github.com/user-attachments/assets/3ab9a63c-667d-4b5d-ac57-caf0aada0d40" width="300px" height="250px" />
+<img src="https://github.com/user-attachments/assets/1b4d58ad-024e-4cfb-bc01-039abb7f9691" width="300px" height="250px" />
+<img src="https://github.com/user-attachments/assets/ecf4cc36-e9e4-4b61-b3f2-688c50871b7d" width="300px" height="250px" />
+<img src="https://github.com/user-attachments/assets/b3d9ced5-1a63-43df-86d8-f3e58916a3cb" width="300px" height="250px" />
